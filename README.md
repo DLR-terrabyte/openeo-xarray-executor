@@ -1,7 +1,15 @@
-Example run command
+# openeo-xarray-executor
 
+## General
+The openEO executor based on xarray (EODC/EURAC backend). The executor is seperated from the api in this repo. Initially forked from [here](https://github.com/eodcgmbh/openeo-argoworkflows) where api and executor are together in one repo.
+
+## Example run command
+
+```
 docker run -v ./output:/user_data exec openeo_executor execute --process_graph '{"id": "0D31CB857AC948944448","process_graph": {"load1": {"process_id": "load_collection","arguments": {"id": "SENTINEL2_MFCOVER","spatial_extent": {"west": 16.206111259998632,"east": 16.43866694610196,"south": 48.132786167842305,"north": 48.4089705430896},"temporal_extent": ["2022-11-01T00:00:00Z","2022-11-30T00:00:00Z"],"bands": ["mfcover"],"properties": {}}},"save2": {"process_id": "save_result","arguments": {"data": {"from_node": "load1"},"format": "GTIFF"},"result": true}},"parameters": []}' --user_profile '{"OPENEO_USER_ID":"TEST", "OPENEO_JOB_ID":"TEST_JOB","OPENEO_USER_WORKSPACE":"/user_data"}' --dask_profile '{"LOCAL": true}'
+```
 
+## Conversion from Docker to Charliecloud for HPC
 To create a charliecloud image .sqfs from the Dockerfile for the use on tb:
 - create a .tar from the Dockerimage: `docker save openeo-executor:latest -o openeo-executor.tar` 
 - copy the .tar to the terrabyte login node: `scp openeo-executor.tar <user_id>@login.terrabyte.lrz.de:/path/to/your/dss/folder/` 
