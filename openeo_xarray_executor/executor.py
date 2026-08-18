@@ -6,8 +6,8 @@ from typing import Optional
 from openeo_pg_parser_networkx import Process, ProcessRegistry, OpenEOProcessGraph
 from openeo_processes_dask.process_implementations.core import process
 
-from openeo_argoworkflows_executor.stac import StacGrid
-from openeo_argoworkflows_executor.utils import (
+from openeo_xarray_executor.stac import StacGrid
+from openeo_xarray_executor.utils import (
     derive_sub_graph, get_pg_bounding_box
 )
 
@@ -79,7 +79,7 @@ def execute(
     
     _register_processes_from_module(process_registry, "openeo_processes_dask")
     _register_processes_from_module(process_registry, "openeo_processes_dask_ml")  # <-- ADDED FOR ML INSTALLATION EMBED2SCALE
-    _register_processes_from_module(process_registry, "openeo_argoworkflows_executor.extra_processes")
+    _register_processes_from_module(process_registry, "openeo_xarray_executor.extra_processes")
 
     pg_callable = parsed_graph.to_callable(
         process_registry=process_registry,

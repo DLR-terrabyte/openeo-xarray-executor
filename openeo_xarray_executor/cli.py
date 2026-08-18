@@ -41,9 +41,9 @@ def execute(process_graph, user_profile, dask_profile):
     import openeo_processes_dask
     from openeo_pg_parser_networkx.graph import OpenEOProcessGraph
 
-    from openeo_argoworkflows_executor.executor import execute
-    from openeo_argoworkflows_executor.models import ExecutorParameters
-    from openeo_argoworkflows_executor.stac import create_stac_item
+    from openeo_xarray_executor.executor import execute
+    from openeo_xarray_executor.models import ExecutorParameters
+    from openeo_xarray_executor.stac import create_stac_item
 
     logger.info(
         f"Using processes from openeo-processes-dask v{openeo_processes_dask.__version__}"
@@ -127,7 +127,7 @@ def execute(process_graph, user_profile, dask_profile):
         )
     output_collection.set_self_href(collection_href)
 
-    from openeo_argoworkflows_executor.stac import create_stac_item
+    from openeo_xarray_executor.stac import create_stac_item
 
     for file in fs.listdir(str(openeo_parameters.user_profile.results_path)):
         filepath = file["name"]

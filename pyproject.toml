@@ -4,7 +4,7 @@ version = "2025.5.1"
 description = "dependencies for openeo processes dask + openeo processes dask ml"
 authors = ["Peter Zellner <peter.zellner@dlr.de>"]
 readme = "README.md"
-packages = [{include = "openeo_argoworkflows_executor"}]
+packages = [{include = "openeo_xarray_executor"}]
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"  #">=3.12" # UPDATE from 3.10 to 3.11 because ML-Processes --> UPDATE to 3.12 for zarr v3
@@ -39,7 +39,7 @@ pytest-asyncio = "^0.23.0"
 pydoc-markdown = "4.8.2"
 
 [tool.poetry.scripts]
-openeo_executor = "openeo_argoworkflows_executor.cli:cli"
+openeo_executor = "openeo_xarray_executor.cli:cli"
 
 [build-system]
 requires = ["poetry-core"]
