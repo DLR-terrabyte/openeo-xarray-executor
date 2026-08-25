@@ -37,7 +37,7 @@ def _register_processes_from_module(
         try:
             specs[func.__name__] = getattr(specs_module, func.__name__)
         except Exception as e:
-            logger.warning(f"Process not registered: {func.__name__}")
+            logger.warning(f"Checking Specs: Process not registered: {func.__name__}")
             continue
     
     #specs = {
@@ -51,7 +51,7 @@ def _register_processes_from_module(
                 spec=specs[func.__name__], implementation=func
             )
         except Exception as e:
-            logger.warning(f"Process not registered: {func.__name__}")
+            logger.warning(f"Checking Impelementations: Process not registered: {func.__name__}")
             continue
 
     return process_registry
