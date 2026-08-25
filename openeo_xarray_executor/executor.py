@@ -31,10 +31,19 @@ def _register_processes_from_module(
     ]
 
     specs_module = importlib.import_module(f"{source}.{specs_dir}")
-    specs = {
-        func.__name__: getattr(specs_module, func.__name__)
-        for func in processes_from_module
-    }
+    
+    specs = {}
+    for func in processes_from_module:
+        try:
+            specs[func.__name__] = getattr(specs_module, func.__name__)
+        except Exception as e:
+            logger.warning(f"Process not registered: {func.__name__}")
+            continue
+    
+    #specs = {
+    #    func.__name__: getattr(specs_module, func.__name__)
+    #    for func in processes_from_module
+    #}
 
     for func in processes_from_module:
         process_registry[func.__name__] = Process(
