@@ -1,46 +1,40 @@
 # ============================================================================
 # Base stage
 # ============================================================================
-FROM ghcr.io/osgeo/gdal:ubuntu-small-3.12.2 AS base
-
+FROM ghcr.io/osgeo/gdal:ubuntu-small-3.13.1 AS base
 WORKDIR /opt
 
-ARG POETRY_VERSION="1.8.3"
-
-ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_HOME=/opt/poetry \
-    VIRTUAL_ENV=/opt/openeo_xarray_executor/.venv \
+ENV UV_PROJECT_ENVIRONMENT=/opt/openeo_xarray_executor/.venv \
+    UV_PYTHON_PREFERENCE=only-system \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH=/opt/openeo_xarray_executor/.venv/bin:$PATH
 
-# Build dependencies
+# git wird für die Git-Dependency benötigt; python3-venv entfällt, das übernimmt uv selbst
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     build-essential \
     python3-dev \
-    python3-venv \
     libexpat1 \
     libexpat1-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# uv-Binary direkt aus dem offiziellen Image übernehmen -> kein pip-Bootstrap mehr nötig
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 # Copy dependency files first for Docker layer caching
-COPY README.md pyproject.toml poetry.lock /opt/
+COPY README.md pyproject.toml uv.lock /opt/
 
-# Create virtual environment and install Poetry
-RUN python3 -m venv $VIRTUAL_ENV && \
-    $VIRTUAL_ENV/bin/pip install --upgrade pip setuptools wheel && \
-    $VIRTUAL_ENV/bin/pip install poetry==${POETRY_VERSION}
+COPY openeo_xarray_executor /opt/openeo_xarray_executor
 
-# Install Python dependencies
-RUN poetry install --only main --no-interaction --no-ansi
+# Install Python dependencies (nur main, ohne dev-Gruppe), gegen das Lockfile
+RUN uv sync --frozen --no-dev
 
 # ============================================================================
 # Production stage
 # ============================================================================
-FROM ghcr.io/osgeo/gdal:ubuntu-small-3.12.2 AS prod
-
+FROM ghcr.io/osgeo/gdal:ubuntu-small-3.13.1 AS prod
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 
