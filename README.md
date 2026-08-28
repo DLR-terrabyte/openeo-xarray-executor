@@ -46,12 +46,15 @@ docker run \
 ```
 
 ## Conversion from Docker to Charliecloud for HPC
-To create a charliecloud image .sqfs from the Dockerfile for the use on tb:
-- create a .tar from the Dockerimage: `docker save openeo-executor:latest -o openeo-executor.tar` 
-- copy the .tar to the terrabyte login node: `scp openeo-executor.tar <user_id>@login.terrabyte.lrz.de:/path/to/your/dss/folder/` 
-- use the latest stable charliecloud version (0.4) there `module load charliecloud/0.40`
-- convert the Dockerimage to a .sqfs: `ch-convert openeo-executor.tar openeo-executor.sqfs`
-- or follow: https://docs.terrabyte.lrz.de/software/containers/charliecloud/#generate-a-charliecloud-image-from-a-dockerfile
+To create a charliecloud image .sqfs from an already built Docker image for use on tb:
+
+* create a container from the Docker image without starting it: `docker create --name temp_openeo openeo-executor:latest`
+* export the container's filesystem as a flat tarball: `docker export temp_openeo -o openeo-executor-flat.tar`
+* remove the temporary container: `docker rm temp_openeo`
+* copy the tarball to the terrabyte login node: `scp openeo-executor-flat.tar <user_id>@login.terrabyte.lrz.de:/path/to/your/dss/folder/`
+* load module path: `module use /dss/dsstbyfs01/pn56su/pn56su-dss-0020/usr/share/modules/files/`
+* load the charliecloud module: `module load charliecloud`
+* convert the flat tarball directly into a compressed SquashFS image: `ch-convert openeo-executor-flat.tar openeo-executor.sqfs`
 
 ## Example run command for charliecloud
 Here is an example sbatch skript for usage on HPC. This is useful for testing and debugging without interacting with the openEO API: [sbatch.sh](sbatch.sh)
