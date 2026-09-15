@@ -44,7 +44,7 @@ default-groups = ["dev"]
 [tool.uv.sources]
 openeo-processes-dask-ml = { git = "https://github.com/Open-EO/openeo-processes-dask-ml.git" }
 torch = { index = "pytorch-cpu" }
-#ml-datacube-bridge = { git = "https://github.com/Open-EO/openeo-processes-dask-ml.git", subdirectory = "ml_datacube_bridge" }
+ml-datacube-bridge = { git = "https://github.com/jonas-hurst/ml-datacube-bridge.git" }
 
 [tool.uv.build-backend]
 module-name = ["openeo_xarray_executor"]
