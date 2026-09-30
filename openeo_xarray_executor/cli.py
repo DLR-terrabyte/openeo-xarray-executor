@@ -109,52 +109,55 @@ def execute(process_graph, user_profile, dask_profile):
         # Can call shutdown on previously closed clusters.
         dask_cluster.shutdown()
 
-    # TODO Time to generate STAC
-    from pystac import Asset, Collection, Extent, SpatialExtent, TemporalExtent, layout
+    try:
+        # TODO Time to generate STAC
+        from pystac import Asset, Collection, Extent, SpatialExtent, TemporalExtent, layout
 
-    fs = fsspec.filesystem(protocol="file")
+        fs = fsspec.filesystem(protocol="file")
 
-    output_collection = Collection(
-        id=openeo_parameters.user_profile.OPENEO_JOB_ID,
-        description=f"The STAC Collection representing the output of job {openeo_parameters.user_profile.OPENEO_JOB_ID}",
-        extent=Extent(
-            SpatialExtent([None, None, None, None]), TemporalExtent([None, None])
-        ),
-    )
-
-    collection_href = str(
-            openeo_parameters.user_profile.stac_path / f"{output_collection.id}_collection.json"
+        output_collection = Collection(
+            id=openeo_parameters.user_profile.OPENEO_JOB_ID,
+            description=f"The STAC Collection representing the output of job {openeo_parameters.user_profile.OPENEO_JOB_ID}",
+            extent=Extent(
+                SpatialExtent([None, None, None, None]), TemporalExtent([None, None])
+            ),
         )
-    output_collection.set_self_href(collection_href)
 
-    from openeo_xarray_executor.stac import create_stac_item
-
-    for file in fs.listdir(str(openeo_parameters.user_profile.results_path)):
-        filepath = file["name"]
-
-        item = create_stac_item(filepath)
-
-        item.set_parent(output_collection)
-        item_href = str(
-            openeo_parameters.user_profile.stac_path / f"{item.id}.json"
-        )
-        item.set_self_href(item_href)
-
-        tmp_asset = Asset(
-                title=item.id,
-                href=str(filepath),
-                roles=["data"]
+        collection_href = str(
+                openeo_parameters.user_profile.stac_path / f"{output_collection.id}_collection.json"
             )
-    
-        output_collection.add_asset(item.id, tmp_asset)
+        output_collection.set_self_href(collection_href)
 
-        output_collection.add_item(item, strategy=layout.AsIsLayoutStrategy())
+        from openeo_xarray_executor.stac import create_stac_item
 
-        item.save_object()
+        for file in fs.listdir(str(openeo_parameters.user_profile.results_path)):
+            filepath = file["name"]
 
-    output_collection.update_extent_from_items()
-    output_collection.save_object()
+            item = create_stac_item(filepath)
 
+            item.set_parent(output_collection)
+            item_href = str(
+                openeo_parameters.user_profile.stac_path / f"{item.id}.json"
+            )
+            item.set_self_href(item_href)
+
+            tmp_asset = Asset(
+                    title=item.id,
+                    href=str(filepath),
+                    roles=["data"]
+                )
+
+            output_collection.add_asset(item.id, tmp_asset)
+
+            output_collection.add_item(item, strategy=layout.AsIsLayoutStrategy())
+
+            item.save_object()
+
+        output_collection.update_extent_from_items()
+        output_collection.save_object()
+
+    except Exception as exc:
+        logger.warning("STAC-creation failed", exc_info=True)
 
 cli.add_command(execute)
 
