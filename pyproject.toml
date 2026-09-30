@@ -18,11 +18,12 @@ dependencies = [
     "odc-stac>=0.3.3,<1",
     "stactools>=0.4.8,<0.5",
     "rioxarray>=0.15.1,<1",
-    "netCDF4>=1.7.3",
+    "netCDF4>=1.7.2",
 #    "netCDF4<=1.6.5", <-old version
     "openeo-processes-dask-ml[torch-cpu, scikit-learn]",
     "gdal==3.13.1",
     "ml-datacube-bridge",
+    "openeo-processes-save-result",
 ]
 
 [project.scripts]
@@ -39,12 +40,18 @@ dev = [
 ]
 
 [tool.uv]
+override-dependencies = [
+    "pystac @ git+https://github.com/jonas-hurst/pystac@v1.15.1OWN",
+    "xarray>=2026.2"
+]
+
 default-groups = ["dev"]
 
 [tool.uv.sources]
 openeo-processes-dask-ml = { git = "https://github.com/Open-EO/openeo-processes-dask-ml.git" }
 torch = { index = "pytorch-cpu" }
 ml-datacube-bridge = { git = "https://github.com/jonas-hurst/ml-datacube-bridge.git" }
+openeo-processes-save-result = {git = "https://github.com/Eurac-Research-Institute-for-EO/openeo-processes-save-result.git"}
 
 [tool.uv.build-backend]
 module-name = ["openeo_xarray_executor"]
