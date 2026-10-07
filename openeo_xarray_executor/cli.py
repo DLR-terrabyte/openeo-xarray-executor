@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import click
 import fsspec
 import logging
@@ -5,6 +8,14 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+
+
+# as an alternative maybe add another click option for files?
+def _load_json_arg(value: str) -> dict:
+    """Accept a JSON object string or a path to a JSON file."""
+    if value.lstrip().startswith("{"):
+        return json.loads(value)
+    return json.loads(Path(value).read_text(encoding="utf-8"))
 
 
 @click.group()
@@ -50,9 +61,9 @@ def execute(process_graph, user_profile, dask_profile):
     )
 
     openeo_parameters = ExecutorParameters(
-        process_graph=json.loads(process_graph),
-        user_profile=json.loads(user_profile),
-        dask_profile=json.loads(dask_profile)
+        process_graph=_load_json_arg(process_graph),
+        user_profile=_load_json_arg(user_profile),
+        dask_profile=_load_json_arg(dask_profile),
     )
 
     if not openeo_parameters.user_profile.OPENEO_USER_WORKSPACE.exists():
