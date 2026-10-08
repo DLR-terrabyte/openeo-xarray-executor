@@ -19,11 +19,12 @@ dependencies = [
     "stactools>=0.4.8,<0.5",
     "rioxarray>=0.15.1,<1",
     "netCDF4>=1.7.2",
-#    "netCDF4<=1.6.5", <-old version
+    #    "netCDF4<=1.6.5", <-old version
     "openeo-processes-dask-ml[torch-cpu, scikit-learn]",
     "gdal==3.13.1",
     "ml-datacube-bridge",
     "openeo-processes-save-result",
+    "fsspec>=2026.9.0",
 ]
 
 [project.scripts]
